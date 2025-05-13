@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bounce Animation & Color Toggle Demo</title>
+    <style>
+        /* CSS Animation */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .animated-box {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            margin: 20px;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .animate {
+            animation: bounce 1s infinite;
+        }
+
+        .color-change {
+            background-color: #e74c3c !important;
+        }
+
+        button {
+            margin: 8px;
+            padding: 10px 18px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            background: #f1f1f1;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:focus {
+            outline: 2px solid #3498db;
+            background: #e0eaff;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-box" aria-live="polite"></div>
+    <button id="toggleBounceBtn" onclick="toggleAnimation()" aria-pressed="false">Start Bounce</button>
+    <button id="changeColorBtn" onclick="changeColor()" aria-pressed="false">Switch to Red</button>
+
+    <script>
+        // Store user preferences
+        function savePreference(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        // Retrieve user preferences
+        function getPreference(key) {
+            return JSON.parse(localStorage.getItem(key));
+        }
+
+        // Animation controller
+        function toggleAnimation() {
+            const box = document.querySelector('.animated-box');
+            const btn = document.getElementById('toggleBounceBtn');
+            const isActive = box.classList.toggle('animate');
+            btn.setAttribute('aria-pressed', isActive);
+            btn.textContent = isActive ? 'Stop Bounce' : 'Start Bounce';
+            // Store animation state
+            savePreference('animationState', isActive);
+        }
+
+        // Color change with transition
+        function changeColor() {
+            const box = document.querySelector('.animated-box');
+            const btn = document.getElementById('changeColorBtn');
+            const isRed = box.classList.toggle('color-change');
+            btn.setAttribute('aria-pressed', isRed);
+            btn.textContent = isRed ? 'Switch to Blue' : 'Switch to Red';
+            // Store color preference
+            savePreference('colorPreference', isRed ? 'red' : 'blue');
+        }
+
+        // Initialize from localStorage
+        window.onload = () => {
+            const box = document.querySelector('.animated-box');
+            const bounceBtn = document.getElementById('toggleBounceBtn');
+            const colorBtn = document.getElementById('changeColorBtn');
+
+            // Load animation state
+            if(getPreference('animationState')) {
+                box.classList.add('animate');
+                bounceBtn.setAttribute('aria-pressed', 'true');
+                bounceBtn.textContent = 'Stop Bounce';
+            }
+
+            // Load color preference
+            const preferredColor = getPreference('colorPreference');
+            if(preferredColor === 'red') {
+                box.classList.add('color-change');
+                colorBtn.setAttribute('aria-pressed', 'true');
+                colorBtn.textContent = 'Switch to Blue';
+            }
+        };
+    </script>
+</body>
+</html>
